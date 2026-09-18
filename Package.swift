@@ -27,8 +27,17 @@ let package = Package(
             name: "DiccctCore",
             path: "Sources/DiccctCore"
         ),
-        // The Diccct executable (AppKit/SwiftUI app shell) is added in the next
-        // step; DiccctCore is self-contained and testable on its own.
+        .executableTarget(
+            name: "Diccct",
+            dependencies: ["DiccctCore"],
+            path: "Sources/Diccct",
+            swiftSettings: [
+                // Swift 5 language mode keeps the concurrency model pragmatic for
+                // a small single-process UI app instead of forcing Swift 6
+                // strict-concurrency annotations across every AppKit callback.
+                .swiftLanguageMode(.v5)
+            ]
+        ),
         .testTarget(
             name: "DiccctCoreTests",
             dependencies: ["DiccctCore"],
