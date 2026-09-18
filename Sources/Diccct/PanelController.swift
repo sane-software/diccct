@@ -82,17 +82,28 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         let panel = FloatingPanel(
             contentRect: NSRect(origin: .zero, size: savedSize()),
-            styleMask: [.borderless, .resizable, .nonactivatingPanel],
+            // Titled (utility) rather than borderless so the window gets macOS's
+            // default rounded corners — matching the SaneWindowList app, whose
+            // rounding is likewise the system default, not a custom radius. The
+            // titlebar is emptied and made transparent so it reads as a thin top
+            // grab strip, and the standard window buttons are hidden.
+            styleMask: [.titled, .utilityWindow, .nonactivatingPanel, .resizable],
             backing: .buffered,
             defer: false
         )
+        panel.titlebarAppearsTransparent = true
+        panel.titleVisibility = .hidden
+        panel.titlebarSeparatorStyle = .none
+        panel.standardWindowButton(.closeButton)?.isHidden = true
+        panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.hidesOnDeactivate = false
         // Visible across spaces and over full-screen apps, so it stays reachable.
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        // Draggable by its background (the control row's top padding acts as the
-        // grab area); interactive controls and selectable text are not affected.
+        // Draggable by the empty titlebar strip and window background; interactive
+        // controls and selectable text are not affected.
         panel.isMovableByWindowBackground = true
         panel.minSize = minSize
         panel.hasShadow = true

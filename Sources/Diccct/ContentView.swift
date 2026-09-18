@@ -48,14 +48,12 @@ struct ContentView: View {
             }
             .help("import translation")
 
-            Button { model.onRequestClose?() } label: {
-                Image(systemName: "minus")
-            }
-            .help("minimize")
+            MinimizeButton { model.onRequestClose?() }
         }
-        // Top padding doubles as the window's grab area (drag handle).
+        // The transparent titlebar strip above this row is the window's grab area;
+        // this padding just gives the controls a little breathing room below it.
         .padding(.horizontal, 10)
-        .padding(.top, 10)
+        .padding(.top, 8)
         .padding(.bottom, 8)
     }
 
@@ -144,6 +142,26 @@ struct ContentView: View {
         if panel.runModal() == .OK, let url = panel.url {
             model.importFile(at: url)
         }
+    }
+}
+
+/// The circular yellow "minimize" control, matching the traffic-light minimize
+/// button used in the SaneWindowList app (14pt yellow circle, heavy minus glyph).
+private struct MinimizeButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle().fill(Color(red: 0.99, green: 0.74, blue: 0.18))
+                Image(systemName: "minus")
+                    .font(.system(size: 9, weight: .heavy))
+                    .foregroundStyle(.black.opacity(0.8))
+            }
+            .frame(width: 14, height: 14)
+        }
+        .buttonStyle(.plain)
+        .help("minimize")
     }
 }
 
