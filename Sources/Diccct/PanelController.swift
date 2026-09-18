@@ -7,6 +7,7 @@ import SwiftUI
 /// This commit establishes create / toggle / top-right positioning with a
 /// persisted size. Drag-to-move-between-screens, screen-change re-pinning and
 /// resize persistence are layered on in a later step.
+@MainActor
 final class PanelController: NSObject {
     private var panel: FloatingPanel?
     private let rootView: () -> AnyView
@@ -19,6 +20,9 @@ final class PanelController: NSObject {
     private let defaultSize = NSSize(width: 440, height: 380)
     private let minSize = NSSize(width: 340, height: 220)
     private let screenMargin: CGFloat = 8
+
+    /// Called just before the panel is shown — used to focus the search field.
+    var onWillShow: (() -> Void)?
 
     init(rootView: @escaping () -> AnyView) {
         self.rootView = rootView
@@ -34,6 +38,7 @@ final class PanelController: NSObject {
     func show() {
         let panel = ensurePanel()
         pinTopRight(panel)
+        onWillShow?()
         panel.makeKeyAndOrderFront(nil)
     }
 

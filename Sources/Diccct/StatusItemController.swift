@@ -4,14 +4,23 @@ import SwiftUI
 /// Manages the menu-bar status item and routes its clicks:
 /// - left click  -> toggle the app window open/closed
 /// - right click (or control-click) -> context menu with Quit
+@MainActor
 final class StatusItemController: NSObject {
     private let statusItem: NSStatusItem
     private let panelController: PanelController
+    private let model: AppModel
 
     override init() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        panelController = PanelController(rootView: { AnyView(PlaceholderView()) })
+        let model = AppModel()
+        self.model = model
+        panelController = PanelController(rootView: { AnyView(ContentView(model: model)) })
         super.init()
+
+        // Minimize button hides the window, same as clicking the menu-bar icon.
+        model.onRequestClose = { [weak self] in self?.panelController.hide() }
+        // Focus the search field whenever the window is shown.
+        panelController.onWillShow = { [weak self] in self?.model.requestFocus() }
 
         if let button = statusItem.button {
             button.image = MenuBarIcon.make()
@@ -21,6 +30,8 @@ final class StatusItemController: NSObject {
             // Receive both mouse buttons on the same action so we can branch.
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
+
+        model.loadOnLaunch()
     }
 
     @objc private func handleClick() {
