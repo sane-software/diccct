@@ -26,7 +26,9 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
     private let defaultSize = NSSize(width: 440, height: 380)
     private let minSize = NSSize(width: 340, height: 220)
-    private let screenMargin: CGFloat = 8
+    // Flush to the screen's top-right: no gap to the right edge, and the top sits
+    // directly under the menu bar (visibleFrame already excludes the menu bar).
+    private let screenMargin: CGFloat = 0
 
     /// True while we move/resize the panel ourselves, so our own frame changes
     /// don't get mistaken for a user drag.
