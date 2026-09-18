@@ -82,37 +82,38 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         let panel = FloatingPanel(
             contentRect: NSRect(origin: .zero, size: savedSize()),
-            // Titled (utility) rather than borderless so the window gets macOS's
-            // default rounded corners — matching the SaneWindowList app, whose
-            // rounding is likewise the system default, not a custom radius. The
-            // titlebar is emptied and made transparent so it reads as a thin top
-            // grab strip, and the standard window buttons are hidden.
-            styleMask: [.titled, .utilityWindow, .nonactivatingPanel, .resizable],
+            // Borderless so there is no titlebar taking any vertical space. The
+            // rounded corners (matching the SaneWindowList app's default window
+            // rounding) are applied to the content layer below instead — a titled
+            // window's own titlebar wastes a strip we don't want here.
+            styleMask: [.borderless, .resizable, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        panel.titlebarAppearsTransparent = true
-        panel.titleVisibility = .hidden
-        panel.titlebarSeparatorStyle = .none
-        panel.standardWindowButton(.closeButton)?.isHidden = true
-        panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.hidesOnDeactivate = false
         // Visible across spaces and over full-screen apps, so it stays reachable.
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        // Draggable by the empty titlebar strip and window background; interactive
-        // controls and selectable text are not affected.
+        // Draggable by the window background (the padding around the controls and
+        // the empty result area); interactive controls and selectable text are not
+        // affected.
         panel.isMovableByWindowBackground = true
         panel.minSize = minSize
         panel.hasShadow = true
-        panel.backgroundColor = .windowBackgroundColor
+        // Clear window background so only the rounded content shows (and the shadow
+        // follows its rounded shape).
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
         panel.delegate = self
 
+        // Round the content corners to roughly the macOS system window radius.
         let hosting = NSHostingView(rootView: rootView())
         hosting.autoresizingMask = [.width, .height]
         hosting.frame = NSRect(origin: .zero, size: panel.frame.size)
+        hosting.wantsLayer = true
+        hosting.layer?.cornerRadius = 10
+        hosting.layer?.masksToBounds = true
         panel.contentView = hosting
 
         self.panel = panel

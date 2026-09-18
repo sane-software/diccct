@@ -50,8 +50,8 @@ struct ContentView: View {
 
             MinimizeButton { model.onRequestClose?() }
         }
-        // The transparent titlebar strip above this row is the window's grab area;
-        // this padding just gives the controls a little breathing room below it.
+        // The window is borderless (no titlebar); this padding is the only space
+        // above the controls, and the empty area around them is the drag region.
         .padding(.horizontal, 10)
         .padding(.top, 8)
         .padding(.bottom, 8)
