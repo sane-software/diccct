@@ -145,6 +145,24 @@ final class PanelController: NSObject, NSWindowDelegate {
         pinTopRight(panel)
     }
 
+    func windowDidResignKey(_ notification: Notification) {
+        // Auto-hide (same as minimizing) when focus leaves to another app or the
+        // desktop, so a click anywhere outside the window dismisses it. Deferred to
+        // the next runloop for two reasons:
+        //  - A click on the menu-bar icon is handled by its own toggle first, which
+        //    hides synchronously; this deferred call then finds the panel already
+        //    hidden and does nothing (so the icon doesn't close-then-reopen).
+        //  - It lets us check whether focus went to one of our OWN windows — the
+        //    import open panel or an alert also make the panel resign key, and we
+        //    must not hide in that case.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let panel = self.panel, panel.isVisible else { return }
+            // A window of ours (open panel / alert / menu) took key focus: keep it.
+            if let key = NSApp.keyWindow, key !== panel { return }
+            self.hide()
+        }
+    }
+
     // MARK: - Positioning
 
     /// Pin the panel to the top-right of its current screen, shrinking it to fit
