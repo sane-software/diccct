@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Assemble Diccct.app from a release build.
+# Assemble SaneDiccct.app from a release build.
 #
-# Diccct is a SwiftPM package with no Xcode project by design (zero third-party
+# SaneDiccct is a SwiftPM package with no Xcode project by design (zero third-party
 # dependencies). This script does what Xcode would otherwise do: build the
 # release executable and wrap it in a proper .app bundle with an Info.plist so it
 # runs as a normal menu-bar app (double-clickable, LSUIElement).
@@ -12,8 +12,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${REPO_ROOT}"
 
-APP_NAME="Diccct"
-BUNDLE_ID="com.sane-software.diccct"
+APP_NAME="SaneDiccct"
+BUNDLE_ID="com.sane-software.sanediccct"
 VERSION="0.1.0"
 APP_DIR="${REPO_ROOT}/${APP_NAME}.app"
 CONTENTS_DIR="${APP_DIR}/Contents"

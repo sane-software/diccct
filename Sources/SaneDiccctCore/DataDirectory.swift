@@ -1,7 +1,7 @@
 import Foundation
 
 /// Manages the on-disk location of dict.cc translation files:
-/// `~/Library/Application Support/Diccct/`.
+/// `~/Library/Application Support/SaneDiccct/`.
 ///
 /// The dict.cc license permits private use only and forbids redistribution, so
 /// these files intentionally live outside the app bundle and outside the git
@@ -30,7 +30,7 @@ public struct DataDirectory {
     /// Default location under the user's Application Support.
     public static func standard() -> DataDirectory {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return DataDirectory(url: base.appendingPathComponent("Diccct", isDirectory: true))
+        return DataDirectory(url: base.appendingPathComponent("SaneDiccct", isDirectory: true))
     }
 
     /// Create the directory if it does not exist yet.

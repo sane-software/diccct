@@ -1,9 +1,9 @@
 import AppKit
 
-// Entry point. Diccct is a menu-bar-only agent: no Dock icon, no main menu bar.
+// Entry point. SaneDiccct is a menu-bar-only agent: no Dock icon, no main menu bar.
 // Setting the activation policy to .accessory here (rather than relying on an
 // Info.plist LSUIElement key) means the app behaves correctly whether launched
-// from the assembled Diccct.app bundle or directly via `swift run`.
+// from the assembled SaneDiccct.app bundle or directly via `swift run`.
 //
 // Top-level code in main.swift is nonisolated, but it always runs on the main
 // thread, so we assert main-actor isolation to construct the (main-actor) app

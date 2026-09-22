@@ -33,7 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         minimizeItem.target = model
         appMenu.addItem(minimizeItem)
         appMenu.addItem(.separator())
-        appMenu.addItem(withTitle: "Quit Diccct",
+        appMenu.addItem(withTitle: "Quit SaneDiccct",
                         action: #selector(NSApplication.terminate(_:)),
                         keyEquivalent: "q")
         appItem.submenu = appMenu

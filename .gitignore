@@ -4,7 +4,7 @@
 Package.resolved
 
 # Assembled app bundle produced by scripts/build-app.sh
-/Diccct.app/
+/SaneDiccct.app/
 *.app/
 
 # macOS cruft
@@ -15,5 +15,5 @@ xcuserdata/
 *.xcuserstate
 
 # NOTE: dict.cc translation files are private-use only per their license and
-# must never be committed. They live in ~/Library/Application Support/Diccct/.
+# must never be committed. They live in ~/Library/Application Support/SaneDiccct/.
 *.txt.dictcc

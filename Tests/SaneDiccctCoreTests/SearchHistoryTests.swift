@@ -1,5 +1,5 @@
 import XCTest
-@testable import DiccctCore
+@testable import SaneDiccctCore
 
 final class SearchHistoryTests: XCTestCase {
     func testUndoRedoAcrossSequentialSearches() {

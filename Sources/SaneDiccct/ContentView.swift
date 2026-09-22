@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 import UniformTypeIdentifiers
-import DiccctCore
+import SaneDiccctCore
 
 /// The panel's content: a control row (search field · pair picker · import ·
 /// minimize) above a two-column results grid.
