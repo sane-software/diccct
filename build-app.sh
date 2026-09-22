@@ -7,9 +7,9 @@
 # runs as a normal menu-bar app (double-clickable, LSUIElement).
 set -euo pipefail
 
-# Resolve the repo root from this script's own location, so it works from anywhere.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+# The script lives at the repo root, so its own directory is the repo root.
+# Resolving from BASH_SOURCE keeps it working when invoked from anywhere.
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${REPO_ROOT}"
 
 APP_NAME="SaneDiccct"

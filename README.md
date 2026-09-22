@@ -26,7 +26,7 @@ You supply the data yourself by downloading a vocabulary file from <https://www.
 There are two ways to import:
 
 - In the app: click the import button (⤓) next to the language-pair picker and choose the downloaded `.txt` file.
-- From the command line: `scripts/import-translation.sh /path/to/download.txt`
+- From the command line: `./import-translation.sh /path/to/download.txt`
 
 Both validate the dict.cc header and store the file under a canonical name (e.g. `de-en.txt`). Re-importing the same pair updates it. The directory is scanned once at launch; files added while the app is running are picked up on next launch (an in-app import is applied immediately).
 
@@ -38,7 +38,7 @@ Requires macOS 14+ and a Swift 6 toolchain (Xcode 16+).
 
 Assemble the app bundle:
 
-    scripts/build-app.sh
+    ./build-app.sh
     open SaneDiccct.app
 
 Or run directly from the package during development:
