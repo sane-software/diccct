@@ -160,6 +160,9 @@ final class AppModel: NSObject, ObservableObject, NSMenuItemValidation {
     @objc func undoSearch(_ sender: Any?) { undo() }
     @objc func redoSearch(_ sender: Any?) { redo() }
 
+    /// Menu target for Cmd+M: hide the window, same as the minimize button.
+    @objc func minimizeWindow(_ sender: Any?) { onRequestClose?() }
+
     nonisolated func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         MainActor.assumeIsolated {
             switch menuItem.action {

@@ -24,6 +24,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let appItem = NSMenuItem()
         let appMenu = NSMenu()
+        // Cmd+M hides the window (our "minimize"), same as the minus button and
+        // clicking the menu-bar icon. Targets the model explicitly so it works
+        // while the search field is the first responder.
+        let minimizeItem = NSMenuItem(title: "Minimize",
+                                      action: #selector(AppModel.minimizeWindow(_:)),
+                                      keyEquivalent: "m")
+        minimizeItem.target = model
+        appMenu.addItem(minimizeItem)
+        appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Quit Diccct",
                         action: #selector(NSApplication.terminate(_:)),
                         keyEquivalent: "q")
