@@ -10,9 +10,8 @@ final class StatusItemController: NSObject {
     private let panelController: PanelController
     private let model: AppModel
 
-    override init() {
+    init(model: AppModel) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        let model = AppModel()
         self.model = model
         panelController = PanelController(rootView: { AnyView(ContentView(model: model)) })
         super.init()

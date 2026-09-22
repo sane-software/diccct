@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 import DiccctCore
 
 /// Observable state bridging DiccctCore to the SwiftUI views.
@@ -8,8 +9,11 @@ import DiccctCore
 /// becomes active and is loaded. Switching pairs purges the previous index and
 /// loads the newly selected one. Nothing about the selection is persisted across
 /// restarts.
+///
+/// It is an NSObject so it can be the target of the Undo/Redo menu items (the
+/// Cmd+Z / Cmd+Shift+Z shortcuts), which drive the search history below.
 @MainActor
-final class AppModel: ObservableObject {
+final class AppModel: NSObject, ObservableObject, NSMenuItemValidation {
     /// All pairs found in the data directory, in dropdown order.
     @Published private(set) var availablePairs: [LanguagePair] = []
     /// The active pair, or nil when nothing is loaded yet.
@@ -20,13 +24,17 @@ final class AppModel: ObservableObject {
     @Published private(set) var results: [TranslationEntry] = []
     /// True while a pair's file is being parsed into memory.
     @Published private(set) var isLoading: Bool = false
-    /// Incremented to ask the view to focus (and select) the search field.
+    /// Incremented to ask the view to focus the search field (caret at the end).
     @Published private(set) var focusRequest: Int = 0
     /// Set when an import fails, for the view to surface as an alert.
     @Published var importErrorMessage: String?
 
     /// At most this many result rows are shown.
     let resultLimit = 50
+
+    /// Whether undo / redo are currently available (drives the buttons + menu).
+    @Published private(set) var canUndo = false
+    @Published private(set) var canRedo = false
 
     /// Invoked by the minimize button; wired to hide the panel.
     var onRequestClose: (() -> Void)?
@@ -38,8 +46,12 @@ final class AppModel: ObservableObject {
     /// Guards against a slow load for a pair the user has since switched away from.
     private var loadToken = 0
 
+    /// Search history for undo/redo; not persisted across restarts.
+    private var searchHistory = SearchHistory(capacity: 50)
+
     init(dataDirectory: DataDirectory = .standard()) {
         self.dataDirectory = dataDirectory
+        super.init()
     }
 
     var hasPairs: Bool { !availablePairs.isEmpty }
@@ -97,8 +109,9 @@ final class AppModel: ObservableObject {
 
     // MARK: - Search
 
-    /// Run the search for the current query text. Called on Enter only. An empty
-    /// query clears the results.
+    /// Execute the search for the current query text. An empty query clears the
+    /// results. This is the raw executor; user submissions go through
+    /// `submitFromUser()` so they also update the history.
     func runSearch() {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, let index else {
@@ -106,6 +119,55 @@ final class AppModel: ObservableObject {
             return
         }
         results = index.search(trimmed, limit: resultLimit)
+    }
+
+    /// A user-initiated search (typed + Enter): record it in the history, then run
+    /// it.
+    func submitFromUser() {
+        searchHistory.record(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        refreshUndoRedoState()
+        runSearch()
+    }
+
+    // MARK: - Search history (undo / redo)
+
+    /// Load and run the previous search in the history.
+    func undo() {
+        guard let text = searchHistory.undo() else { return }
+        loadHistoryAndRun(text)
+    }
+
+    /// Load and run the next search, or clear the field when moving past the newest.
+    func redo() {
+        guard let text = searchHistory.redo() else { return }
+        loadHistoryAndRun(text)
+    }
+
+    private func loadHistoryAndRun(_ text: String) {
+        query = text
+        runSearch()
+        refreshUndoRedoState()
+        // Return focus to the field with the caret at the end (never selected).
+        requestFocus()
+    }
+
+    private func refreshUndoRedoState() {
+        canUndo = searchHistory.canUndo
+        canRedo = searchHistory.canRedo
+    }
+
+    // Menu targets for the Cmd+Z / Cmd+Shift+Z shortcuts.
+    @objc func undoSearch(_ sender: Any?) { undo() }
+    @objc func redoSearch(_ sender: Any?) { redo() }
+
+    nonisolated func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        MainActor.assumeIsolated {
+            switch menuItem.action {
+            case #selector(undoSearch(_:)): return canUndo
+            case #selector(redoSearch(_:)): return canRedo
+            default: return true
+            }
+        }
     }
 
     // MARK: - Import
@@ -126,7 +188,8 @@ final class AppModel: ObservableObject {
 
     // MARK: - Focus
 
-    /// Ask the view to focus (and select) the search field, e.g. on panel show.
+    /// Ask the view to focus the search field (caret at the end, no selection),
+    /// e.g. on panel show or after an undo/redo load.
     func requestFocus() {
         focusRequest += 1
     }

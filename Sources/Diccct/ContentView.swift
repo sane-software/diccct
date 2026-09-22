@@ -32,12 +32,24 @@ struct ContentView: View {
 
     private var controlRow: some View {
         HStack(spacing: 8) {
+            Button(action: { model.undo() }) {
+                Image(systemName: "arrow.left")
+            }
+            .help("undo")
+            .disabled(!model.canUndo)
+
+            Button(action: { model.redo() }) {
+                Image(systemName: "arrow.right")
+            }
+            .help("redo")
+            .disabled(!model.canRedo)
+
             SearchField(
                 text: $model.query,
                 placeholder: searchPlaceholder,
                 isEnabled: model.hasPairs,
                 focusToken: model.focusRequest,
-                onSubmit: { model.runSearch() }
+                onSubmit: { model.submitFromUser() }
             )
             .frame(maxWidth: .infinity)
 

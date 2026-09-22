@@ -5,10 +5,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Owns the menu-bar status item and, through it, the app window. Held for
     /// the lifetime of the app.
     private var statusItemController: StatusItemController?
+    /// The shared app model; also the target of the Undo/Redo menu shortcuts.
+    private let model = AppModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         installMainMenu()
-        statusItemController = StatusItemController()
+        statusItemController = StatusItemController(model: model)
     }
 
     /// Accessory apps show no menu bar, but the main menu is still what routes the
@@ -30,6 +32,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let editItem = NSMenuItem()
         let editMenu = NSMenu(title: "Edit")
+        // Undo/Redo drive the search history (not text-field editing undo). They
+        // target the model explicitly, so Cmd+Z / Cmd+Shift+Z work even while the
+        // search field is the first responder.
+        let undoItem = NSMenuItem(title: "Undo Search", action: #selector(AppModel.undoSearch(_:)), keyEquivalent: "z")
+        undoItem.target = model
+        editMenu.addItem(undoItem)
+        let redoItem = NSMenuItem(title: "Redo Search", action: #selector(AppModel.redoSearch(_:)), keyEquivalent: "z")
+        redoItem.keyEquivalentModifierMask = [.command, .shift]
+        redoItem.target = model
+        editMenu.addItem(redoItem)
+        editMenu.addItem(.separator())
         editMenu.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
         editMenu.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
         editMenu.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
