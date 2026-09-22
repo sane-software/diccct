@@ -7,7 +7,6 @@ import DiccctCore
 /// minimize) above a two-column results grid.
 struct ContentView: View {
     @ObservedObject var model: AppModel
-    @FocusState private var searchFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,8 +15,6 @@ struct ContentView: View {
             resultsArea
         }
         .background(Color(nsColor: .windowBackgroundColor))
-        .onAppear { focusSearch() }
-        .onChange(of: model.focusRequest) { _, _ in focusSearch() }
         .alert(
             "Import failed",
             isPresented: Binding(
@@ -35,11 +32,14 @@ struct ContentView: View {
 
     private var controlRow: some View {
         HStack(spacing: 8) {
-            TextField(searchPlaceholder, text: $model.query)
-                .textFieldStyle(.roundedBorder)
-                .focused($searchFocused)
-                .disabled(!model.hasPairs)
-                .onSubmit { model.runSearch() }
+            SearchField(
+                text: $model.query,
+                placeholder: searchPlaceholder,
+                isEnabled: model.hasPairs,
+                focusToken: model.focusRequest,
+                onSubmit: { model.runSearch() }
+            )
+            .frame(maxWidth: .infinity)
 
             pairPicker
 
@@ -123,12 +123,6 @@ struct ContentView: View {
     }
 
     // MARK: - Actions
-
-    private func focusSearch() {
-        guard model.hasPairs else { return }
-        // Defer so focus lands after the panel becomes key and the view is live.
-        DispatchQueue.main.async { searchFocused = true }
-    }
 
     private func importTapped() {
         let panel = NSOpenPanel()
