@@ -1,8 +1,8 @@
-# SaneDiccct
+# SaneDictCcDictionary
 
 A tiny macOS menu-bar app for looking up dict.cc translations. Click the menu-bar icon, a small window drops into the top-right corner of the screen, you type a word, press Enter, and get the matching translations — English on the left, German on the right — with selectable text you can copy.
 
-SaneDiccct stays out of the way: it lives only in the menu bar (no Dock icon), floats above other windows without stealing focus, and closes again with a click on the icon or its minimize button.
+SaneDictCcDictionary stays out of the way: it lives only in the menu bar (no Dock icon), floats above other windows without stealing focus, and closes again with a click on the icon or its minimize button.
 
 ## Features
 
@@ -17,11 +17,11 @@ SaneDiccct stays out of the way: it lives only in the menu bar (no Dock icon), f
 
 ## Translation data
 
-SaneDiccct does not ship with any dict.cc data. dict.cc vocabulary files are licensed for **private use only** and may not be redistributed, so they are never bundled with the app or committed to this repo.
+SaneDictCcDictionary does not ship with any dict.cc data. dict.cc vocabulary files are licensed for **private use only** and may not be redistributed, so they are never bundled with the app or committed to this repo.
 
 You supply the data yourself by downloading a vocabulary file from <https://www.dict.cc/> (see their translation-file request page) and importing it. Files live in:
 
-    ~/Library/Application Support/SaneDiccct/
+    ~/Library/Application Support/SaneDictCcDictionary/
 
 There are two ways to import:
 
@@ -39,22 +39,22 @@ Requires macOS 14+ and a Swift 6 toolchain (Xcode 16+).
 Assemble the app bundle:
 
     ./build-app.sh
-    open SaneDiccct.app
+    open SaneDictCcDictionary.app
 
 Or run directly from the package during development:
 
-    swift run SaneDiccct
+    swift run SaneDictCcDictionary
 
 ## Development
 
     swift build
     swift test
 
-The logic layer (`SaneDiccctCore`: dict.cc parsing, the search index, data-directory handling) is pure Foundation and fully unit-tested, independent of the AppKit/SwiftUI app shell.
+The logic layer (`SaneDictCcDictionaryCore`: dict.cc parsing, the search index, data-directory handling) is pure Foundation and fully unit-tested, independent of the AppKit/SwiftUI app shell.
 
 A real-file integration test is skipped by default and runs only when pointed at an actual dict.cc export (which is never committed):
 
-    SANEDICCCT_REAL_FILE=/path/to/export.txt swift test
+    SANEDICTCCDICTIONARY_REAL_FILE=/path/to/export.txt swift test
 
 ## Design notes
 

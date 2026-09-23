@@ -1,16 +1,16 @@
 import XCTest
-@testable import SaneDiccctCore
+@testable import SaneDictCcDictionaryCore
 
 /// Integration checks against a real dict.cc export. Skipped unless the env var
-/// `SANEDICCCT_REAL_FILE` points to one, so CI and normal `swift test` runs stay
+/// `SANEDICTCCDICTIONARY_REAL_FILE` points to one, so CI and normal `swift test` runs stay
 /// hermetic and never depend on (non-redistributable) dict.cc data. Run with:
 ///
-///     SANEDICCCT_REAL_FILE=/path/to/export.txt swift test
+///     SANEDICTCCDICTIONARY_REAL_FILE=/path/to/export.txt swift test
 ///
 final class RealFileIntegrationTests: XCTestCase {
     private func realFilePath() throws -> String {
-        guard let path = ProcessInfo.processInfo.environment["SANEDICCCT_REAL_FILE"] else {
-            throw XCTSkip("Set SANEDICCCT_REAL_FILE to run the real-file integration test.")
+        guard let path = ProcessInfo.processInfo.environment["SANEDICTCCDICTIONARY_REAL_FILE"] else {
+            throw XCTSkip("Set SANEDICTCCDICTIONARY_REAL_FILE to run the real-file integration test.")
         }
         return path
     }

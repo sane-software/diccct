@@ -23,7 +23,7 @@ final class StatusItemController: NSObject {
 
         if let button = statusItem.button {
             button.image = MenuBarIcon.make()
-            button.toolTip = "SaneDiccct"
+            button.toolTip = "SaneDictCcDictionary"
             button.target = self
             button.action = #selector(handleClick)
             // Receive both mouse buttons on the same action so we can branch.
@@ -48,7 +48,7 @@ final class StatusItemController: NSObject {
 
     private func showContextMenu() {
         let menu = NSMenu()
-        let quit = NSMenuItem(title: "Quit SaneDiccct", action: #selector(quit), keyEquivalent: "q")
+        let quit = NSMenuItem(title: "Quit SaneDictCcDictionary", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
 

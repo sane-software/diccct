@@ -1,5 +1,5 @@
 import XCTest
-@testable import SaneDiccctCore
+@testable import SaneDictCcDictionaryCore
 
 final class HTMLEntitiesTests: XCTestCase {
     func testDecodesDecimalEntity() {
@@ -134,7 +134,7 @@ final class TranslationIndexTests: XCTestCase {
 final class DataDirectoryTests: XCTestCase {
     private func makeTempDir() throws -> DataDirectory {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("SaneDiccctTests-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("SaneDictCcDictionaryTests-\(UUID().uuidString)", isDirectory: true)
         let dir = DataDirectory(url: tmp)
         try dir.ensureExists()
         return dir

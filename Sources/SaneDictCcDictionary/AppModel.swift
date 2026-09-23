@@ -1,8 +1,8 @@
 import Foundation
 import AppKit
-import SaneDiccctCore
+import SaneDictCcDictionaryCore
 
-/// Observable state bridging SaneDiccctCore to the SwiftUI views.
+/// Observable state bridging SaneDictCcDictionaryCore to the SwiftUI views.
 ///
 /// Memory model (per the app design): only the *selected* pair is held in RAM.
 /// On launch the directory is scanned once; the first pair (deterministic order)
